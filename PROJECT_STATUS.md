@@ -2,7 +2,7 @@
 
 > 本文件记录项目当前真实进展。每次任务结束后更新，不得写入未完成的事项为「已完成」。
 
-最后更新：2026-11-03
+最后更新：2026-11-05
 
 ---
 
@@ -31,17 +31,27 @@
 - [x] GitHub 仓库建立并关联（SSH Deploy Key，读写权限已验证）
 - [x] 开发规范文件建立：`AGENTS.md`、`PROJECT_STATUS.md`、`CHANGELOG.md`
 - [x] 开发阶段计划（V1.0 → V1.3）确定并记录
+- [x] Android 工程骨架：Gradle 8.9 Wrapper、AGP 8.7.3、Kotlin 2.0.21、compileSdk/targetSdk 35、minSdk 26
+- [x] `MainActivity` + WebView：加载内置 assets，仅放行 `file:///android_asset/`，禁止网络与外部跳转
+- [x] 内置前端骨架：`index.html` / `css/style.css` / `js/app.js`，无任何外部资源
+- [x] GitHub Actions 构建工作流 `.github/workflows/android.yml`
+- [x] 静态检查通过：Manifest 无 `INTERNET` 权限、assets 无外链、HTML/JS/CSS/XML 语法合法、Gradle 配置与依赖解析成功
 
-**当前仓库中尚无任何 Android 工程代码，无应用源码、无构建脚本。**
+**应用当前只是可启动的空壳**：首页仅有学习路线占位，没有任何 PLC 教学内容。
+
+**构建产物尚未验证**：开发机为 ARM64，Google 的 `aapt2` 仅有 x86-64 版本，本地无法打包；
+APK 必须由 GitHub Actions（x86-64）产出，其首次运行结果尚未确认。
 
 ---
 
 ## 4. 当前未完成内容
 
-- [ ] Android 工程骨架（Gradle 配置、`AndroidManifest.xml`、`MainActivity`、WebView 承载）
-- [ ] 前端资源目录与基础页面框架
-- [ ] 全部 V1.0 功能（见第 5 节）
-- [ ] 构建与真机验证流程
+- [ ] CI 首次构建结果确认（APK 是否实际产出）
+- [ ] APK 真机安装与离线运行验证
+- [ ] 全部 V1.0 教学内容（首页导航可交互、DI/DO、AI/AO、NO/NC、电气控制练习，见第 5 节）
+- [ ] 本地学习进度保存
+- [ ] 应用图标与 release 签名配置
+- [ ] 单元测试
 - [ ] `README.md`
 
 ---
@@ -76,7 +86,8 @@
 
 | 风险 | 说明 | 应对 |
 |---|---|---|
-| 构建环境未验证 | 当前工作环境为 Ubuntu 容器，尚未确认 Android SDK / Gradle 可用性与版本 | V1.0 开始时先验证工具链，再写代码 |
+| 本地不可打包 | 开发机为 ARM64，Google `aapt2` 仅有 x86-64，本地 `assembleDebug` 必然失败（`error=2`） | APK 只走 GitHub Actions（x86-64）；本地仅做静态检查与 Gradle 配置验证 |
+| CI 结果待确认 | 私有仓库，本地无 API 凭据，无法读取 Actions 运行状态 | 在仓库 Actions 页面确认，或提供只读 PAT |
 | WebView 版本差异 | 不同设备 WebView 内核版本不同，CSS/JS 特性支持不一致 | 避免使用过新特性，必要时降级实现 |
 | 资源体积 | 离线内置图片/字体可能增大 APK | 优先矢量图（SVG/VectorDrawable）与系统字体 |
 | 网络被误引入 | 后续易顺手加 CDN 或在线字体 | 代码审查时检查外链，`INTERNET` 权限保持未申请 |
@@ -89,14 +100,15 @@
 
 - 分支：`main`
 - 远端：`origin` → `ssh://git@ssh.github.com:443/hetugou/plc-learning-assistant.git`
-- 当前版本：`0.1.0`（文档基线，无应用代码）
-- 基线提交：`chore: initialize repository`（空树）+ 本次文档提交
-- 构建状态：**不可构建**（尚无 Android 工程）
-- 测试状态：**无测试**（尚无代码）
+- 当前版本：`0.2.0`（与 `versionName` 一致，工程骨架）
+- 最近提交：`2a290d3 build: 建立 Android 工程骨架与 GitHub Actions 构建`
+- 构建状态：**云端待验证**（本地 ARM64 不可打包，CI 为唯一出口）
+- 测试状态：**无测试代码**，仅完成静态检查与 Gradle 配置/依赖解析验证
 
 ---
 
 ## 8. 下一步建议
 
-从 **Android 工程骨架** 开始：先建立可编译的最小 Kotlin + WebView 工程并确认本地构建通过，
-再依次实现首页导航 → DI/DO 教学 → NO/NC → 练习 → 进度保存。
+1. 先闭合构建闭环：确认 GitHub Actions 首次运行结果，下载 `app-debug-apk` 并装机验证离线启动。
+2. 构建确认后进入内容开发：首页导航 → DI/DO 教学 → NO/NC → 交互练习 → 进度保存。
+3. 补充发布要素：应用图标、`README.md`、基础单元测试。
