@@ -39,14 +39,15 @@
 
 **应用当前只是可启动的空壳**：首页仅有学习路线占位，没有任何 PLC 教学内容。
 
-**构建产物尚未验证**：开发机为 ARM64，Google 的 `aapt2` 仅有 x86-64 版本，本地无法打包；
-APK 必须由 GitHub Actions（x86-64）产出，其首次运行结果尚未确认。
+**构建链路已打通**：开发机为 ARM64，Google 的 `aapt2` 仅有 x86-64 版本，本地无法打包；
+APK 由 GitHub Actions（x86-64）产出，run `42150512502` 构建通过，artifact `app-debug-apk` 约 2.09 MB。
+APK 尚未在真机上安装验证。
 
 ---
 
 ## 4. 当前未完成内容
 
-- [ ] CI 首次构建结果确认（APK 是否实际产出）
+- [x] CI 构建通过并产出 APK（run `42150512502`，commit `c60a50c`）
 - [ ] APK 真机安装与离线运行验证
 - [ ] 全部 V1.0 教学内容（首页导航可交互、DI/DO、AI/AO、NO/NC、电气控制练习，见第 5 节）
 - [ ] 本地学习进度保存
@@ -87,7 +88,7 @@ APK 必须由 GitHub Actions（x86-64）产出，其首次运行结果尚未确�
 | 风险 | 说明 | 应对 |
 |---|---|---|
 | 本地不可打包 | 开发机为 ARM64，Google `aapt2` 仅有 x86-64，本地 `assembleDebug` 必然失败（`error=2`） | APK 只走 GitHub Actions（x86-64）；本地仅做静态检查与 Gradle 配置验证 |
-| CI 结果待确认 | 私有仓库，本地无 API 凭据，无法读取 Actions 运行状态 | 在仓库 Actions 页面确认，或提供只读 PAT |
+| CI 依赖第三方 action | `android-actions/setup-android@v3` 默认安装已下线的 `tools` 包，曾导致构建失败 | 已升级至 v4（默认仅装 `platform-tools`），后续升级需核对默认参数 |
 | WebView 版本差异 | 不同设备 WebView 内核版本不同，CSS/JS 特性支持不一致 | 避免使用过新特性，必要时降级实现 |
 | 资源体积 | 离线内置图片/字体可能增大 APK | 优先矢量图（SVG/VectorDrawable）与系统字体 |
 | 网络被误引入 | 后续易顺手加 CDN 或在线字体 | 代码审查时检查外链，`INTERNET` 权限保持未申请 |
@@ -102,7 +103,7 @@ APK 必须由 GitHub Actions（x86-64）产出，其首次运行结果尚未确�
 - 远端：`origin` → `ssh://git@ssh.github.com:443/hetugou/plc-learning-assistant.git`
 - 当前版本：`0.2.0`（与 `versionName` 一致，工程骨架）
 - 最近提交：`2a290d3 build: 建立 Android 工程骨架与 GitHub Actions 构建`
-- 构建状态：**云端待验证**（本地 ARM64 不可打包，CI 为唯一出口）
+- 构建状态：**CI 通过**（run `42150512502`，2026-11-06）；产物 `app-debug-apk` 2.09 MB；真机安装未验证
 - 测试状态：**无测试代码**，仅完成静态检查与 Gradle 配置/依赖解析验证
 
 ---

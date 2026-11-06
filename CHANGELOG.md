@@ -12,7 +12,10 @@
 
 ## [未发布]
 
-（暂无）
+### 修复
+- CI：`android-actions/setup-android` 由 `v3` 升级至 `v4`。v3 默认安装已从 SDK 仓库下线的 `tools` 包，
+  导致 `Set up Android SDK` 步骤报 `Failed to find package 'tools'` 并以 `sdkmanager failed with exit code 1` 失败；
+  v4 的默认包已改为 `platform-tools`。升级后构建通过并产出 `app-debug-apk`。
 
 ---
 
